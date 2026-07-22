@@ -1,119 +1,125 @@
-# AI-NOTE.md
+# AI-NOTE.md — fyf-learnai-site
 
-Context primer for AI assistants resuming work on this project.  
-**Read this file first. Then read STATUS.md. Then read the relevant doc.**
-
----
-
-## What This Project Is
-
-`fyf-learnai-site` is the Hugo static site for `learnai.fundyourfreedom.in` —  
-FundYourFreedom's dedicated AI learning platform. It is a **separate, long-term domain**,  
-not a subsection of learn.fundyourfreedom.in.
-
-Content is GenZ-reframed versions of Google DeepMind's AI/ML curriculum  
-(starting with "Build Your Own Small Language Model"). Same core concepts,  
-delivered as intuitive, interactive, step-by-step tutorials.
+Context primer for AI assistants working on this repo.  
+**Read this first. Then read STATUS.md and DECISIONS.md.**
 
 ---
 
-## Architecture at a Glance
+## What This Repo Is
 
-| Layer | Choice | Reason |
-|---|---|---|
-| Static site generator | Hugo | Existing FYF stack |
-| Theme | PaperMod | Same as fyf-news-site (CSS already tuned) |
-| Brand CSS | `assets/css/custom.css` | Ported directly from fyf-news-site |
-| Interactive labs | Pyodide (in-browser Python) | Set up once via shortcode, works on every lesson forever |
-| Deployment | GitHub Actions → Cloudflare Pages | Repo is PUBLIC = free Actions minutes |
-| Hosting | Cloudflare Pages | Existing FYF infra |
+`fyf-learnai-site` is a Hugo-based course platform.  
+Live URL: **https://aicourses.fundyourfreedom.in**  
+Repo: `HABSGconsulting/fyf-learnai-site` (public)
+
+It hosts structured AI courses — each with explainer lessons, Python labs (Pyodide), and reflection prompts.
+This is a long-lived, growing platform. It will have many courses over time.
 
 ---
 
-## The Two Lesson Types
+## Architecture
 
-### Explainer (`type: explainer` in front matter)
-- Concept-first, short paragraphs, real-world analogies
-- GenZ tone: direct, curious, no jargon walls
-- Uses `{{< callout >}}` shortcode for "💭 Wait, but why?" boxes
-- No code execution required
+### Two-Theme Cascade
 
-### Lab (`type: lab` in front matter)
-- Students write and run Python directly in the browser (Pyodide)
-- Uses `{{< pyodide id="unique-id" >}}` shortcode
-- Includes a short explainer intro, then the interactive cell, then a reflection prompt
-- Never links out to Colab — everything stays on learnai.fundyourfreedom.in
+```
+themes/
+  PaperMod/            ← base theme (public submodule)
+  fyf-hugo-theme/      ← FYF overrides (PRIVATE submodule — HABSGconsulting/fyf-hugo-theme)
+```
 
----
+Hugo loads themes left-to-right. `fyf-hugo-theme` is loaded second and wins on any conflict.
+Do NOT put layouts or shortcodes directly in this repo — they belong in `fyf-hugo-theme`.
 
-## Key Files
+### What Lives Where
 
-| File | Purpose |
+| Location | Contains |
 |---|---|
-| `config.yaml` | Hugo config, baseURL, PaperMod params |
-| `assets/css/custom.css` | FYF brand CSS (Inter + Source Serif 4, navy/amber palette) |
-| `layouts/shortcodes/pyodide.html` | Pyodide interactive Python cell — set once, use everywhere |
-| `layouts/shortcodes/callout.html` | Callout boxes for explainer lessons |
-| `content/courses/` | All course content lives here |
-| `docs/` | Internal project documentation |
-| `.github/workflows/deploy.yml` | Build + deploy to Cloudflare Pages |
+| `content/courses/` | All course and lesson Markdown files |
+| `config.yaml` | Site config, pyodideVersion param, baseURL |
+| `assets/css/custom.css` | Site-specific CSS overrides (keep minimal) |
+| `themes/fyf-hugo-theme/` | Course layouts, shortcodes, brand CSS (edit in fyf-hugo-theme repo) |
+| `themes/PaperMod/` | Base theme (never edit directly) |
+
+### Content Hierarchy
+
+```
+content/
+  courses/
+    build-your-own-slm/
+      _index.md            ← course landing (title, description, intro text ONLY — no manual lesson list)
+      01-what-is-a-language-model/
+        index.md           ← lesson
+      02-lab-probability-distribution/
+        index.md
+    using-ai-with-python/
+      _index.md
+      01-what-is-ai-and-python/
+        index.md
+```
+
+**IMPORTANT:** `_index.md` files must NOT contain a manual lesson list.
+The `fyf-hugo-theme` `list.html` template auto-generates the lesson index from child pages.
+Just write the course intro in `_index.md` — the lesson cards appear automatically.
 
 ---
 
-## Pyodide — Critical Notes
+## Front Matter Schema
 
-- Pyodide loads from CDN: `https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js`
-- First page load is ~10MB (browser caches after that)
-- Each `{{< pyodide id="x" >}}` cell is independent — no shared state between cells
-- Supported: all Python standard library (collections, random, json, re, math, itertools)
-- NOT supported: file I/O, network requests from within Pyodide cells
-- To add numpy: `await py.loadPackage("numpy")` — see `docs/03-pyodide-setup.md`
+### Course landing (`_index.md`)
+```yaml
+---
+title: "Course Title"
+description: "One-line description"
+weight: 1        # controls order on the /courses/ index
+date: 2026-07-22
+source: "Attribution string"
+---
+```
+
+### Lesson (`index.md`)
+```yaml
+---
+title: "Lesson Title"
+description: "One-line description for SEO + course index card"
+weight: 1                      # controls lesson order within course
+date: 2026-07-22
+lessonType: explainer          # explainer | lab | reflection | quiz
+course: course-slug            # parent course slug
+lessonNumber: 1                # integer, shown on card
+source: "Attribution string"
+---
+```
 
 ---
 
-## Content Source
+## Shortcodes Available
 
-Google DeepMind course: "Build Your Own Small Language Model"  
-URL: https://www.skills.google/course_templates/1341  
-Module 1 (explainer): https://www.skills.google/paths/3135/course_templates/1341/html_bundles/597240  
-Module 2 (lab): https://www.skills.google/paths/3135/course_templates/1341/html_bundles/597241  
+All shortcodes live in `themes/fyf-hugo-theme/layouts/shortcodes/`.
 
-Approach: Same core concepts, redelivered with:
-- GenZ tone (no jargon walls, direct, real analogies)
-- Spotify / autocomplete / Reddit analogies (not dry academic examples)
-- Live runnable code on every lab lesson
-- "💭 Wait, but why?" callout boxes to pre-answer confusion
-
----
-
-## Deployment
-
-1. Push to `main` branch
-2. GitHub Actions runs `deploy.yml` (free — public repo)
-3. Hugo builds `public/`
-4. Cloudflare Pages deploys to `learnai.fundyourfreedom.in`
-
-Required GitHub secrets: `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`  
-See `docs/05-deployment-guide.md` for full setup.
-
----
-
-## What To Do If Resuming
-
-1. Read `STATUS.md` — check Immediate TODO
-2. Run `hugo server` locally to verify build
-3. Check `content/courses/build-your-own-slm/` for lesson status
-4. Author next lesson per `docs/04-lesson-authoring-guide.md`
-5. Push to `main` — deploy is automatic
-
----
-
-## Docs Index
-
-| Doc | Topic |
+| Shortcode | Usage |
 |---|---|
-| `docs/01-project-overview.md` | Vision, goals, audience |
-| `docs/02-content-architecture.md` | Course/lesson/section structure |
-| `docs/03-pyodide-setup.md` | How Pyodide is integrated |
-| `docs/04-lesson-authoring-guide.md` | How to write explainer + lab lessons |
-| `docs/05-deployment-guide.md` | GitHub Actions → Cloudflare Pages |
+| `{{< pyodide id="x" >}}...{{< /pyodide >}}` | In-browser Python cell |
+| `{{< callout title="..." >}}...{{< /callout >}}` | Amber callout/annotation box |
+| `{{< quiz >}}` | Multiple choice quiz (stub — future) |
+
+Pyodide version is set in `config.yaml` → `params.pyodideVersion`. To upgrade: change that one value.
+
+---
+
+## CI / Deployment
+
+- GitHub Actions: `.github/workflows/deploy.yml`
+- Requires secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GH_PAT`
+- `GH_PAT` is needed to fetch the private `fyf-hugo-theme` submodule during CI
+- Deploys to Cloudflare Pages on every push to `main`
+- Live at: https://aicourses.fundyourfreedom.in
+
+---
+
+## Rules for AI Working on This Repo
+
+1. **Never put layouts or shortcodes here** — they go in `fyf-hugo-theme`
+2. **Never add manual lesson HTML to `_index.md`** — the template does it automatically
+3. **Always set `lessonNumber` and `weight`** in lesson front matter
+4. **Always set `lessonType`** — explainer | lab | reflection | quiz
+5. **Keep `custom.css` minimal** — brand styles are in the theme
+6. **Update `STATUS.md`** after adding any new lesson or course

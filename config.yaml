@@ -1,6 +1,6 @@
-baseURL: https://learnai.fundyourfreedom.in
+baseURL: https://aicourses.fundyourfreedom.in
 languageCode: en-in
-title: FundYourFreedom | Learn AI
+title: FundYourFreedom | AI Courses
 theme:
   - PaperMod
   - fyf-hugo-theme
@@ -17,7 +17,7 @@ params:
     - courses
   homeInfoParams:
     Title: "AI, explained like you actually want to learn it"
-    Content: "Intuitive, interactive, step-by-step AI tutorials. Built for people who want to understand — not just use — AI."
+    Content: "Intuitive, interactive, step-by-step AI courses. Built for people who want to understand — not just use — AI."
   ShowReadingTime: false
   ShowShareButtons: false
   ShowPostNavLinks: true

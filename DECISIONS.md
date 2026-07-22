@@ -20,7 +20,7 @@ Repo is **public**. Unlimited free GitHub Actions minutes. All secrets stored in
 **Status:** Accepted
 
 ### Decision
-Use Pyodide from CDN. Implemented as a Hugo shortcode in `fyf-hugo-theme`. Set up once — usable on every lesson page. Students never leave `learnai.fundyourfreedom.in`.
+Use Pyodide from CDN. Implemented as a Hugo shortcode in `fyf-hugo-theme`. Set up once — usable on every lesson page. Students never leave `aicourses.fundyourfreedom.in`.
 
 ---
 
@@ -91,5 +91,31 @@ Extract all reusable theme code into a **private** shared repo: `HABSGconsulting
 Add `GH_PAT` secret to `fyf-learnai-site` (and any future tutorial site repos). This is the same pattern used in `fyf-guides-engine` / `fyf-guides-runner`. The PAT needs `repo` scope. Set once, never needs updating unless rotated.
 
 ### Required Secret
-`GH_PAT` — Personal Access Token with `repo` scope.
+`GH_PAT` — Personal Access Token with `repo` scope.  
 Set in: repo Settings → Secrets → Actions.
+
+---
+
+## ADR-008 — Subdomain: aicourses.fundyourfreedom.in
+
+**Date:** 2026-07-22  
+**Status:** Accepted
+
+### Context
+Initially planned as `learnai.fundyourfreedom.in`. Reviewed before content accumulated.
+
+### Decision
+Use `aicourses.fundyourfreedom.in` as the live URL.
+
+### Rationale
+- `learnai` is too broad — could imply a blog, articles, or general learning portal
+- `aicourses` sets the exact right expectation — visitors know this is a structured course catalog
+- Avoids confusion with `learn.fundyourfreedom.in` (a different FYF property)
+- "AI courses" is an actual search phrase; `learnai` is not
+- Changed before content grew — the only cost-free moment to make this change
+
+### Repo Rename
+Repo name `fyf-learnai-site` is **kept as-is** to avoid breaking the Cloudflare Pages connection and CI pipeline. The subdomain is what users see; the repo name is internal infrastructure.
+
+### DNS Action Required
+Add CNAME: `aicourses` → Cloudflare Pages domain (see `docs/05-deployment-guide.md`).

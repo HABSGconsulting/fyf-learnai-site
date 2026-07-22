@@ -1,62 +1,77 @@
 # 05 — Deployment Guide
 
-## Architecture
+## How the Theme Works (No Local Step Needed)
+
+Hugo PaperMod is declared as a **git submodule** in `.gitmodules`:
 
 ```
-Push to main branch
-  → GitHub Actions (deploy.yml)
-    → Hugo build (hugo --minify)
-      → Cloudflare Pages deploy
-        → learnai.fundyourfreedom.in live
+[submodule "themes/PaperMod"]
+    path = themes/PaperMod
+    url = https://github.com/adityatelange/hugo-PaperMod.git
+    branch = master
 ```
 
-## One-Time Setup
+When GitHub Actions runs the deploy workflow, `actions/checkout` with `submodules: true` automatically pulls PaperMod from the [adityatelange/hugo-PaperMod](https://github.com/adityatelange/hugo-PaperMod) repo into `themes/PaperMod/` at build time. **Nothing needs to happen locally. The theme is never committed into this repo — it is fetched fresh on every build.**
 
-### 1. Add PaperMod Theme (run locally once)
-```bash
-git clone --recurse-submodules https://github.com/HABSGconsulting/fyf-learnai-site
-cd fyf-learnai-site
-git submodule add https://github.com/adityatelange/hugo-PaperMod themes/PaperMod
-git commit -m "add PaperMod theme as submodule"
-git push
+This is identical to how `fyf-news-site` works.
+
+---
+
+## Deploy Architecture
+
+```
+Push to main branch (by AI or by you)
+  → GitHub Actions triggers deploy.yml (free — public repo)
+    → checkout repo + pull PaperMod submodule automatically
+      → Hugo builds public/
+        → Cloudflare Pages deploys
+          → learnai.fundyourfreedom.in is live (~60 seconds total)
 ```
 
-### 2. Create Cloudflare Pages Project
-- Cloudflare Dashboard → Pages → Create a project
-- Connect to GitHub → select `HABSGconsulting/fyf-learnai-site`
-- Build settings:
-  - Framework: Hugo
-  - Build command: `hugo --minify`
-  - Build output: `public`
-- Deploy
+---
 
-### 3. Set GitHub Secrets
-Repo Settings → Secrets and variables → Actions → New repository secret:
+## One-Time Setup (You Do This — Two Places Only)
 
-| Secret | Where to get it |
+### Step 1 — GitHub Secrets
+
+Go to: [fyf-learnai-site → Settings → Secrets → Actions](https://github.com/HABSGconsulting/fyf-learnai-site/settings/secrets/actions)
+
+Add these two secrets:
+
+| Secret Name | Where to Get It |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare Dashboard → My Profile → API Tokens → Create token (Cloudflare Pages: Edit) |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → right sidebar on any page |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Dashboard → My Profile → API Tokens → Create Token → use template "Cloudflare Pages: Edit" |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → right sidebar (any page) |
 
-### 4. DNS — Point the Subdomain
+### Step 2 — Cloudflare Pages Project
+
+1. Cloudflare Dashboard → **Pages** → **Create a project**
+2. Connect to GitHub → select `HABSGconsulting/fyf-learnai-site`
+3. Build settings:
+   - Framework preset: **Hugo**
+   - Build command: `hugo --minify`
+   - Build output directory: `public`
+4. Click **Save and Deploy**
+
+### Step 3 — DNS
+
 In Cloudflare DNS for `fundyourfreedom.in`:
-- Add CNAME: `learnai` → your Cloudflare Pages domain (e.g. `fyf-learnai-site.pages.dev`)
-- Proxy status: ON (orange cloud)
+- Type: **CNAME**
+- Name: `learnai`
+- Target: your Cloudflare Pages domain (e.g. `fyf-learnai-site.pages.dev`)
+- Proxy: **ON** (orange cloud)
 
-## Ongoing Deployment
+---
 
-Every push to `main` automatically:
-1. Triggers GitHub Actions (free — public repo)
-2. Builds Hugo site (~5–15 seconds)
-3. Deploys to Cloudflare Pages
-4. Site live within ~60 seconds of push
+## Ongoing Workflow
 
-## Local Dev
+After one-time setup, everything is automatic:
+- **Content changes** — I push to `main` via GitHub API
+- **Secrets / DNS / Cloudflare config** — you manage in respective dashboards
+- **Every push to `main`** — site rebuilds and deploys automatically, no action needed from either of us
 
-```bash
-git clone --recurse-submodules https://github.com/HABSGconsulting/fyf-learnai-site
-cd fyf-learnai-site
-hugo server   # visit http://localhost:1313
-```
+---
 
-`hugo server` hot-reloads on every file save — no refresh needed.
+## Updating the PaperMod Theme
+
+The submodule tracks `branch = master` of PaperMod. To update to the latest PaperMod version, I can update the submodule SHA reference via a commit. Current latest release: **v8.0** (Nov 2024).

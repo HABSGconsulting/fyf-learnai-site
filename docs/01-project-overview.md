@@ -2,34 +2,43 @@
 
 ## What Is This
 
-`fyf-learnai-site` powers `learnai.fundyourfreedom.in` — FundYourFreedom's dedicated AI learning platform.
+`fyf-learnai-site` powers **https://aicourses.fundyourfreedom.in** — FundYourFreedom's AI course platform.
 
-This is a **separate domain** from `learn.fundyourfreedom.in` (which covers personal finance). AI education is a big, long-term domain with its own audience, its own content format, and its own growth trajectory.
+This is a **separate domain** from `learn.fundyourfreedom.in` (personal finance) and `news.fundyourfreedom.in` (AI news). AI courses are a distinct, long-term product with their own audience, content format, and growth trajectory.
+
+---
 
 ## The Problem We're Solving
 
 Google DeepMind and others publish excellent AI/ML learning material. But it's written for people who are already somewhat technical — dense paragraphs, abstract examples, no interactivity.
 
-GenZ learners (and frankly most people) need:
+FYF learners need:
 - Short, punchy explanations with real-world analogies
 - Immediate hands-on experience — not reading about code, *running* code
 - Content that acknowledges what's confusing and pre-answers it
 - No install friction — everything in the browser
 
+---
+
 ## What We're Building
 
-GenZ-reframed AI/ML tutorials that:
+A growing catalog of AI courses that:
 - Use the same core concepts as Google's curriculum (no dumbing down)
 - Deliver them with intuitive analogies (Spotify, autocomplete, Reddit)
 - Include live in-browser Python labs (Pyodide — no Colab, no installs)
-- Are structured as lovely linked step-by-step tutorials
-- Render beautifully on `learnai.fundyourfreedom.in` via Hugo PaperMod
+- Are structured as step-by-step linked lessons with prev/next navigation
+- Render beautifully at `aicourses.fundyourfreedom.in` via Hugo
 
-## First Course
+---
 
-**Build Your Own Small Language Model**  
-Source: Google DeepMind (https://www.skills.google/course_templates/1341)  
-Coverage: Language model fundamentals → probability distributions → building a working SLM
+## Courses
+
+| # | Course | Status |
+|---|---|---|
+| 1 | Build Your Own Small Language Model | In progress |
+| 2 | Using AI with Python | Stub — being written |
+
+---
 
 ## Audience
 
@@ -37,12 +46,35 @@ Coverage: Language model fundamentals → probability distributions → building
 - Non-CS graduates who want to understand AI, not just use it
 - FundYourFreedom readers who want to upskill in AI/ML
 
+---
+
 ## Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Static site generator | Hugo |
-| Theme | PaperMod (mirrors fyf-news-site) |
-| Interactive Python | Pyodide (in-browser, no backend) |
-| Deployment | GitHub Actions → Cloudflare Pages |
-| DNS | Cloudflare (subdomain of fundyourfreedom.in) |
+| Layer | Choice | Notes |
+|---|---|---|
+| Static site generator | Hugo (extended, latest) | Fast builds, no Node |
+| Base theme | PaperMod (public submodule) | Navigation, pagination, search |
+| FYF theme | `fyf-hugo-theme` (private submodule) | Course layouts, shortcodes, brand CSS |
+| Interactive Python | Pyodide (in-browser, no backend) | Version set in `config.yaml` |
+| CI/CD | GitHub Actions | Free — public repo |
+| Hosting | Cloudflare Pages | Global CDN, zero cost |
+| DNS | Cloudflare | `aicourses.fundyourfreedom.in` |
+
+---
+
+## Repository Structure
+
+```
+fyf-learnai-site/
+  config.yaml                     ← site config + pyodideVersion param
+  assets/css/custom.css           ← site-specific overrides only
+  content/courses/                ← ALL course and lesson content
+  themes/
+    PaperMod/                     ← base theme (public submodule)
+    fyf-hugo-theme/               ← FYF overrides (private submodule)
+  .github/workflows/deploy.yml    ← CI/CD pipeline
+  docs/                           ← this documentation
+  AI-NOTE.md                      ← AI assistant primer (read first)
+  STATUS.md                       ← current build state
+  DECISIONS.md                    ← architecture decision records
+```

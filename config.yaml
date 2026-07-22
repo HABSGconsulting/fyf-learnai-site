@@ -15,12 +15,13 @@ params:
   homeInfoParams:
     Title: "AI, explained like you actually want to learn it"
     Content: "Intuitive, interactive, step-by-step AI tutorials. Built for people who want to understand — not just use — AI."
-  ShowReadingTime: true
+  ShowReadingTime: false
   ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
-  hideMeta: false
+  hideMeta: true
+  hideAuthor: true
   dateFormat: "2 Jan 2006"
   defaultTheme: light
   disableThemeToggle: false

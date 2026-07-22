@@ -5,68 +5,56 @@ Last updated: 2026-07-22
 
 ---
 
-## Current Phase: Phase 0 — Scaffold & First Lesson
+## Current Phase: Phase 1 — Content (Course 1 in progress)
 
-### What Is Complete
+### Infrastructure: Complete
 
 - [x] Repo created: `HABSGconsulting/fyf-learnai-site` (public)
-- [x] Hugo config scaffold (`config.yaml`)
-- [x] FYF brand CSS (`assets/css/custom.css`) — ported from fyf-news-site
+- [x] Hugo config (`config.yaml`) — hideMeta true, tutorial mode
+- [x] FYF brand CSS (`assets/css/custom.css`) — blog meta hidden, course-index styles, lesson-row layout
 - [x] Pyodide shortcode (`layouts/shortcodes/pyodide.html`)
 - [x] Callout shortcode (`layouts/shortcodes/callout.html`)
 - [x] GitHub Actions deploy workflow (`.github/workflows/deploy.yml`)
-- [x] All documentation files (docs/01–05)
+- [x] All documentation files (`docs/01`–`05`)
 - [x] `AI-NOTE.md`, `STATUS.md`, `DECISIONS.md`, `README.md`
-- [x] Course scaffold: `build-your-own-slm` with 2 full lessons
+- [x] `.gitmodules` — PaperMod submodule declared (fetched automatically by CI)
 
-### What Is Pending
+### Pending (One-Time — Owner Action)
 
-- [ ] Add PaperMod as git submodule locally: `git submodule add https://github.com/adityatelange/hugo-PaperMod themes/PaperMod`
-- [ ] Set Cloudflare secrets in GitHub repo: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
-- [ ] Create Cloudflare Pages project pointing to this repo
-- [ ] Point `learnai.fundyourfreedom.in` DNS to Cloudflare Pages
-- [ ] Verify Pyodide loads correctly in deployed environment
-- [ ] Test dark mode rendering with FYF brand CSS
-- [ ] Plan and write Lesson 03 onwards
+- [ ] GitHub repo Settings → Secrets: add `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+- [ ] Create Cloudflare Pages project → connect repo → build `hugo --minify` → output `public`
+- [ ] DNS: CNAME `learnai` → Cloudflare Pages domain
 
 ---
 
-## Course Status: Build Your Own Small Language Model
+## Course 1: Build Your Own Small Language Model
+
+Source: Google DeepMind — https://www.skills.google/course_templates/1341
 
 | # | Lesson | Type | Status |
 |---|---|---|---|
 | 01 | What Is a Language Model? | Explainer | ✅ Written |
-| 02 | Build a Probability Distribution | Lab | ✅ Written |
-| 03+ | (to be planned) | TBD | ❌ Not started |
+| 02 | Lab: Build a Probability Distribution | Lab | ✅ Written |
+| 03 | Reflect on Your Findings | Reflection | ✅ Written |
+| 04+ | (next — per Google course) | TBD | ❌ Not started |
 
 ---
 
-## Required Secrets (set in GitHub repo Settings → Secrets → Actions)
+## Immediate TODO (AI)
 
-| Secret | Purpose |
-|---|---|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare Pages deployment |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account identifier |
-
----
-
-## Immediate TODO
-
-1. `git submodule add https://github.com/adityatelange/hugo-PaperMod themes/PaperMod` locally + push
-2. Set the two Cloudflare secrets in repo Settings → Secrets
-3. Create Cloudflare Pages project → connect this repo → build command `hugo --minify` → output `public`
-4. DNS: add CNAME `learnai` → Cloudflare Pages domain
-5. Verify site renders at learnai.fundyourfreedom.in
-6. Plan Lesson 03 onwards
+1. Continue adding lessons as Google course content is shared
+2. Update course `_index.md` lesson index with each new lesson
+3. Update this STATUS.md lesson table with each new lesson
 
 ---
 
-## Key Decisions Made (see DECISIONS.md)
+## Key Decisions (see DECISIONS.md)
 
 | # | Decision |
 |---|---|
 | ADR-001 | Repo is PUBLIC — free GitHub Actions minutes |
-| ADR-002 | Pyodide for in-browser Python labs (not Colab redirects) |
-| ADR-003 | Hugo PaperMod theme — mirrors fyf-news-site CSS |
+| ADR-002 | Pyodide for in-browser Python labs |
+| ADR-003 | Hugo PaperMod — mirrors fyf-news-site CSS |
 | ADR-004 | Separate repo from FYF-learn — AI is its own domain |
 | ADR-005 | Content hierarchy: Course → Lesson (numbered folders) |
+| ADR-006 | Tutorial mode: hideMeta=true, manual course index in _index.md |

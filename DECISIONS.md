@@ -9,11 +9,8 @@ This file records significant technical decisions made during the development of
 **Date:** 2026-07-22  
 **Status:** Accepted
 
-### Context
-Deploying to Cloudflare Pages via GitHub Actions requires CI minutes. Private repos consume the free quota (2,000 min/month on free plan). The content in this repo is educational and public-facing anyway.
-
 ### Decision
-Repo is **public**. This gives unlimited free GitHub Actions minutes. All secrets (Cloudflare tokens) are stored in GitHub repo Secrets — never in code. Nothing sensitive is in this repo.
+Repo is **public**. Unlimited free GitHub Actions minutes. All secrets stored in GitHub repo Secrets — never in code.
 
 ---
 
@@ -22,26 +19,18 @@ Repo is **public**. This gives unlimited free GitHub Actions minutes. All secret
 **Date:** 2026-07-22  
 **Status:** Accepted
 
-### Options Considered
-
-| Option | Pros | Cons | Decision |
-|---|---|---|---|
-| Google Colab link-out | Zero setup | Leaves the site; breaks flow | Rejected |
-| Embedded Colab iframe | Stays on page | Auth wall, not mobile friendly | Rejected |
-| Pyodide (in-browser Python) | Runs on page, no backend, cacheable | ~10MB first load | **Accepted** |
-
 ### Decision
-Use Pyodide loaded from CDN. Implemented as a single Hugo shortcode (`layouts/shortcodes/pyodide.html`). Set up once — usable on every lesson page forever. Students never leave `learnai.fundyourfreedom.in`.
+Use Pyodide from CDN. Implemented as a Hugo shortcode in `fyf-hugo-theme`. Set up once — usable on every lesson page. Students never leave `learnai.fundyourfreedom.in`.
 
 ---
 
-## ADR-003 — Hugo PaperMod Theme (Mirroring fyf-news-site)
+## ADR-003 — Hugo PaperMod Theme (Base)
 
 **Date:** 2026-07-22  
 **Status:** Accepted
 
 ### Decision
-Use Hugo PaperMod — the same theme as `fyf-news-site`. The `custom.css` from fyf-news-site is ported directly: Inter + Source Serif 4 fonts, FYF navy/amber palette, dark mode variables. This gives brand consistency across the FYF network with zero extra design work.
+Use Hugo PaperMod as the base theme. FYF-specific overrides live in `fyf-hugo-theme` (loaded second in theme cascade, wins on conflicts).
 
 ---
 
@@ -50,11 +39,8 @@ Use Hugo PaperMod — the same theme as `fyf-news-site`. The `custom.css` from f
 **Date:** 2026-07-22  
 **Status:** Accepted
 
-### Context
-`FYF-learn` (private) serves `learn.fundyourfreedom.in` with Hugo Relearn theme for finance courses. The new AI curriculum is going to `learnai.fundyourfreedom.in`.
-
 ### Decision
-Separate repo (`fyf-learnai-site`). AI education is a distinct, long-term domain — it needs its own space, its own deployment pipeline, its own content architecture, and room to grow independently of the finance learning content.
+Separate repo (`fyf-learnai-site`). AI education is a distinct, long-term domain — its own space, pipeline, content architecture, and growth trajectory.
 
 ---
 
@@ -64,11 +50,46 @@ Separate repo (`fyf-learnai-site`). AI education is a distinct, long-term domain
 **Status:** Accepted
 
 ### Decision
-Content hierarchy:
-- `content/courses/{course-slug}/` — one folder per course
-- `content/courses/{course-slug}/{NN-lesson-slug}/index.md` — one folder per lesson (numbered for order)
-- Each lesson has `type: explainer` or `type: lab` in front matter
-- Hugo's `weight` param controls lesson sequence
-- `ShowPostNavLinks: true` in PaperMod gives automatic "← Previous | Next →" navigation
+Content hierarchy: `content/courses/{course-slug}/{NN-lesson-slug}/index.md`. Hugo `weight` + `lessonNumber` params control ordering. `ShowPostNavLinks: true` gives automatic prev/next navigation.
 
-This mirrors the fyf-news-site pattern and renders as a naturally linked step-by-step tutorial on the site.
+---
+
+## ADR-006 — Shared Theme Repo (`fyf-hugo-theme`)
+
+**Date:** 2026-07-22  
+**Status:** Accepted
+
+### Context
+Audit (2026-07-22) found that shortcodes, CSS, and course layouts were duplicated inside `fyf-learnai-site`. As more tutorial sites are added to the FYF network, this would require maintaining the same code in multiple repos.
+
+### Decision
+Extract all reusable theme code into a **private** shared repo: `HABSGconsulting/fyf-hugo-theme`. Each tutorial site declares it as a git submodule alongside PaperMod. Hugo's theme cascade loads it second, so it overrides PaperMod where needed.
+
+### What Lives in fyf-hugo-theme
+- `layouts/courses/list.html` — auto course index (no manual HTML)
+- `layouts/courses/single.html` — lesson page (no blog meta)
+- `layouts/partials/lesson-badge.html` — type badge logic
+- `layouts/shortcodes/pyodide.html`, `callout.html`, `quiz.html`
+- `assets/css/base.css`, `course.css`, `pyodide.css`, `callout.css`
+
+### What Stays in Site Repo
+- `content/` — all lesson content
+- `config.yaml` — site config including `pyodideVersion` param
+- `assets/css/custom.css` — site-specific overrides only (kept minimal)
+
+---
+
+## ADR-007 — Private Submodule via GH_PAT
+
+**Date:** 2026-07-22  
+**Status:** Accepted
+
+### Context
+`fyf-hugo-theme` is private (protects FYF brand CSS and layout IP). GitHub Actions `GITHUB_TOKEN` only accesses the current repo. A PAT is needed to fetch private submodules in CI.
+
+### Decision
+Add `GH_PAT` secret to `fyf-learnai-site` (and any future tutorial site repos). This is the same pattern used in `fyf-guides-engine` / `fyf-guides-runner`. The PAT needs `repo` scope. Set once, never needs updating unless rotated.
+
+### Required Secret
+`GH_PAT` — Personal Access Token with `repo` scope.
+Set in: repo Settings → Secrets → Actions.

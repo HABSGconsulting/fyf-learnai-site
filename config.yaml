@@ -1,7 +1,9 @@
 baseURL: https://learnai.fundyourfreedom.in
 languageCode: en-in
 title: FundYourFreedom | Learn AI
-theme: PaperMod
+theme:
+  - PaperMod
+  - fyf-hugo-theme
 timeZone: Asia/Kolkata
 
 defaultContentLanguage: en
@@ -10,6 +12,7 @@ pagination:
   pagerSize: 20
 
 params:
+  pyodideVersion: "0.27.0"
   mainSections:
     - courses
   homeInfoParams:
@@ -20,8 +23,6 @@ params:
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true
-  hideMeta: true
-  hideAuthor: true
   dateFormat: "2 Jan 2006"
   defaultTheme: light
   disableThemeToggle: false

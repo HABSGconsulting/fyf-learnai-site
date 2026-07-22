@@ -16,6 +16,8 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
+          # GH_PAT needed to fetch private fyf-hugo-theme submodule
+          token: ${{ secrets.GH_PAT }}
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3

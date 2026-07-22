@@ -1,0 +1,9 @@
+{{/*
+  Callout Box Shortcode
+  Usage: {{< callout title="Wait, but why?" >}} Your text here {{< /callout >}}
+  Default title if not provided: "💭 Wait, but why?"
+*/}}
+<div class="callout">
+  <div class="callout-title">{{ with .Get "title" }}{{ . }}{{ else }}💭 Wait, but why?{{ end }}</div>
+  {{ .Inner | markdownify }}
+</div>

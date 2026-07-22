@@ -1,0 +1,54 @@
+baseURL: https://learnai.fundyourfreedom.in
+languageCode: en-in
+title: FundYourFreedom | Learn AI
+theme: PaperMod
+timeZone: Asia/Kolkata
+
+defaultContentLanguage: en
+
+pagination:
+  pagerSize: 20
+
+params:
+  mainSections:
+    - courses
+  homeInfoParams:
+    Title: "AI, explained like you actually want to learn it"
+    Content: "Intuitive, interactive, step-by-step AI tutorials. Built for people who want to understand — not just use — AI."
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  hideMeta: false
+  dateFormat: "2 Jan 2006"
+  defaultTheme: light
+  disableThemeToggle: false
+  ShowToc: true
+  TocOpen: false
+
+menu:
+  main:
+    - name: Courses
+      url: /courses/
+      weight: 5
+    - name: News
+      url: https://news.fundyourfreedom.in
+      weight: 10
+    - name: Blog
+      url: https://blog.fundyourfreedom.in
+      weight: 15
+    - name: Learn
+      url: https://learn.fundyourfreedom.in
+      weight: 20
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true

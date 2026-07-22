@@ -1,0 +1,54 @@
+{{/*
+  Pyodide Interactive Python Shortcode
+  Usage: {{< pyodide id="unique-id" >}}
+  Code between the tags is the default/starter code shown in the cell.
+  Students can edit it and click Run.
+*/}}
+
+{{ if not (.Page.Scratch.Get "pyodide_loaded") }}
+{{ .Page.Scratch.Set "pyodide_loaded" true }}
+<script>
+  window._pyodideReady = (async () => {
+    if (window._pyodide) return window._pyodide;
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js';
+    document.head.appendChild(script);
+    await new Promise(r => script.onload = r);
+    window._pyodide = await loadPyodide();
+    return window._pyodide;
+  })();
+
+  async function runPyodideCell(id) {
+    const btn    = document.getElementById('run-' + id);
+    const output = document.getElementById('output-' + id);
+    const code   = document.getElementById('code-' + id).value;
+    btn.disabled = true;
+    btn.textContent = '⏳ Running...';
+    output.textContent = '';
+    output.style.color = '#86efac';
+    try {
+      const py = await window._pyodideReady;
+      py.runPython(`
+import sys, io
+_buf = io.StringIO()
+sys.stdout = _buf
+`);
+      await py.runPythonAsync(code);
+      py.runPython('sys.stdout = sys.__stdout__');
+      const result = py.runPython('_buf.getvalue()');
+      output.textContent = result || '(no output)';
+    } catch (err) {
+      output.style.color = '#f87171';
+      output.textContent = '❌ ' + err.message;
+    }
+    btn.disabled = false;
+    btn.textContent = '▶ Run';
+  }
+</script>
+{{ end }}
+
+<div class="pyodide-cell">
+  <textarea id="code-{{ .Get "id" }}">{{ .Inner | strings.TrimSpace }}</textarea>
+  <button class="pyodide-run-btn" id="run-{{ .Get "id" }}" onclick="runPyodideCell('{{ .Get `id` }}')">▶ Run</button>
+  <div class="pyodide-output" id="output-{{ .Get "id" }}"></div>
+</div>

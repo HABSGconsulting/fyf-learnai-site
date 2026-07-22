@@ -1,0 +1,117 @@
+/* fyf-learnai-site — brand styles (ported from fyf-news-site) */
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap');
+
+/* Brand palette — mirrors fyf-news-site */
+:root {
+  --fyf-navy:   #164E63;
+  --fyf-amber:  #D97706;
+  --fyf-text:   #374151;
+  --fyf-muted:  #6B7280;
+  --fyf-base:   #FAFAFA;
+  --fyf-border: rgba(22, 78, 99, 0.12);
+  --fyf-green:  #059669;
+  --fyf-red:    #DC2626;
+}
+
+.dark {
+  --fyf-navy:   #38BDF8;
+  --fyf-amber:  #FCD34D;
+  --fyf-text:   #E5E7EB;
+  --fyf-muted:  #9CA3AF;
+  --fyf-base:   #1F2937;
+  --fyf-border: rgba(255,255,255,0.08);
+  --fyf-green:  #34D399;
+  --fyf-red:    #F87171;
+}
+
+/* Body */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header { border-bottom: 1px solid var(--fyf-border); }
+.logo a, .logo span { color: var(--fyf-navy) !important; }
+
+/* === Pyodide Lab Cell === */
+.pyodide-cell {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border: 1px solid var(--fyf-border);
+}
+.pyodide-cell textarea {
+  width: 100%;
+  min-height: 120px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9rem;
+  border: none;
+  outline: none;
+  resize: vertical;
+  padding: 0.5rem;
+}
+.pyodide-run-btn {
+  margin-top: 0.75rem;
+  background: var(--fyf-amber);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.pyodide-run-btn:hover { opacity: 0.85; }
+.pyodide-output {
+  margin-top: 0.75rem;
+  background: #1e293b;
+  color: #86efac;
+  font-family: monospace;
+  font-size: 0.85rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  min-height: 1.5rem;
+}
+
+/* === Callout Box === */
+.callout {
+  border-left: 4px solid var(--fyf-amber);
+  background: rgba(217, 119, 6, 0.06);
+  border-radius: 0 8px 8px 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+  color: var(--fyf-text);
+}
+.dark .callout {
+  background: rgba(252, 211, 77, 0.06);
+}
+.callout-title {
+  font-weight: 600;
+  color: var(--fyf-amber);
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Lesson type badge */
+.lesson-type-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+.badge-explainer { background: rgba(22,78,99,0.1); color: var(--fyf-navy); }
+.badge-lab       { background: rgba(217,119,6,0.12); color: var(--fyf-amber); }
